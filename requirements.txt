@@ -1,15 +1,3 @@
+streamlit
 pandas
-numpy
-openpyxl 
-
-# Visualização
 matplotlib
-seaborn
-
-scikit-learn
-
-jupyter
-notebook
-ipykernel
-
-tqdm    
