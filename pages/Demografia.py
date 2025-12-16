@@ -39,7 +39,7 @@ try:
     # =================================================================
     # BLOCO GEOGRÁFICO REDESENHADO
     # =================================================================
-    st.header("Análise Geográfica")
+    st.subheader("Distribuição de inscritos pelo território nacional")
 
     # 1. PREPARAÇÃO DOS DADOS
     # Contagem por Estado
@@ -60,9 +60,9 @@ try:
     # LINHA 1: MAPA (Esquerda) + GRÁFICO REGIÕES (Direita)
     # -----------------------------------------------------------------
     col_mapa, col_regiao = st.columns([3, 2], gap="medium")
-
+    
     with col_mapa:
-        st.subheader("Mapa de Calor")
+        
         if 'CO_UF_CURSO' in df.columns:
             fig_mapa = px.choropleth(
                 dados_mapa,
@@ -72,7 +72,8 @@ try:
                 color='Total',
                 color_continuous_scale="Blues",
                 hover_name='UF',
-                hover_data={'UF': False, 'Total': True}
+                hover_data={'UF': False, 'Total': True},
+                labels={'Total': 'Número de Inscritos'},
             )
             fig_mapa.update_geos(fitbounds="locations", visible=False)
             fig_mapa.update_layout(
@@ -84,7 +85,6 @@ try:
             st.plotly_chart(fig_mapa, use_container_width=True)
 
     with col_regiao:
-        st.subheader("Comparativo Regional")
         fig_reg = px.bar(
             dados_regiao,
             x='Regiao',
@@ -99,7 +99,8 @@ try:
             xaxis_title="", 
             yaxis_title="",
             margin=dict(t=20, b=0),
-            height=400 # Mesma altura do mapa para alinhar
+            height=400, 
+            title="Inscritos por Região"
         )
         st.plotly_chart(fig_reg, use_container_width=True)
 

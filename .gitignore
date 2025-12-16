@@ -1,5 +1,5 @@
 *.txt
 *.csv
 *.xlsx
-data/
+data/raw/
 __pycache__/
