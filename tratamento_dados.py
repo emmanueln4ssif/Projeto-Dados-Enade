@@ -15,7 +15,7 @@ def tratar_dados_gerais():
     
     print("Carregando dados gerais dos estudantes...")
     
-    cols_arquivo1 = ['CO_IES', 'CO_CURSO', 'CO_UF_CURSO', 'CO_REGIAO_CURSO']
+    cols_arquivo1 = ['CO_IES', 'CO_CURSO', 'CO_MUNIC_CURSO','CO_UF_CURSO', 'CO_REGIAO_CURSO']
     df_info_geral = pd.read_csv(ARQUIVO_INFO_GERAL, sep=';', encoding='latin1', usecols=cols_arquivo1)
     
     cols_arquivo3 = ['TP_PR_GER']

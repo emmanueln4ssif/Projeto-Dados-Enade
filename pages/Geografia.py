@@ -32,8 +32,8 @@ def get_geojson():
 with st.sidebar:
     st.caption("Dados do IDHM 2021 são oriundos do portal oficial do Atlas Brasil (www.atlasbrasil.com.br)")
 
-st.title("Panorama ENADE 2023 - Demografia")
-st.markdown("Análise demográfica e geográfica dos estudantes inscritos.")
+st.title("Panorama ENADE 2023 - Geografia")
+st.markdown("Análise geográfica dos estudantes inscritos no exame.")
 
 try:
     df = load_data()
