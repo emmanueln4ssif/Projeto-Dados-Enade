@@ -8,6 +8,8 @@ ARQUIVO_INFO_PROVA = "data/raw/enade/microdados2023_arq3.txt"
 ARQUIVO_INFO_GENERO = "data/raw/enade/microdados2023_arq5.txt"
 ARQUIVO_INFO_IDADE = "data/raw/enade/microdados2023_arq6.txt"
 ARQUIVO_INFO_RACA = "data/raw/enade/microdados2023_arq8.txt"
+ARQUIVO_IDH = "data/processed/idh_atlasbrasil.xlsx"
+
 
 def tratar_dados_gerais():
     
@@ -49,8 +51,48 @@ def tratar_dados_gerais():
     return df_geral
 
 
+def tratar_dados_idh():
+    
+    cols_arquivo_idh = ['Territorialidades', 'IDHM 2021','IDHM Educação 2021', 'IDHM Renda 2021']
+    df_idh = pd.read_excel(ARQUIVO_IDH, usecols=cols_arquivo_idh, engine='openpyxl')
+    
+    return df_idh
+
+
+def relacionar_idh_estados_nota():
+
+    df_prova = pd.read_csv(ARQUIVO_INFO_PROVA, sep=';', encoding='latin1', usecols=['NT_GER'])
+    df_geral = pd.read_csv(ARQUIVO_INFO_GERAL, sep=';', encoding='latin1', usecols=['CO_UF_CURSO'])
+    
+    df_final = pd.concat([df_geral, df_prova], axis=1)
+    
+    if df_final['NT_GER'].dtype == 'O':
+        df_final['NT_GER'] = df_final['NT_GER'].str.replace(',', '.').astype(float)
+    
+    df_final = df_final.dropna(subset=['NT_GER'])
+    
+    df_final['Territorialidades'] = df_final['CO_UF_CURSO'].map(CO_UF_CURSO_LABELS)
+    
+    df_idh = tratar_dados_idh()
+    
+    df_final = pd.merge(
+        df_final,
+        df_idh,
+        on='Territorialidades',
+        how='left'
+    )
+    
+    print(f"Total de registros válidos para análise: {len(df_final)}")
+    print(df_final[:800])
+    df_final.to_parquet("data/processed/idh_notas_estudos.parquet", index=False)
+    
+    return df_final
+    
+    
 if __name__ == "__main__":
     tratar_dados_gerais()
+    tratar_dados_idh()
+    relacionar_idh_estados_nota()
     
     
     
