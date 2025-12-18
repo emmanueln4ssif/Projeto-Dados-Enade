@@ -17,9 +17,6 @@ try:
     df = tratar_dados_gerais() 
 
     st.title("Breve análise do perfil de gênero e raça dos inscritos no ENADE 2023")
-    st.markdown("""
-    Esta seção vai além da demografia básica. Aqui, investigamos hipóteses sobre **quem são** os estudantes e **como o contexto regional** (IDH) pode influenciar o desempenho acadêmico.
-    """)
     
     col_k1, col_k2, col_k3, col_k4 = st.columns(4)
     col_k1.metric("Total Estudantes", f"{len(df):,.0f}".replace(",", "."))
@@ -73,8 +70,7 @@ try:
 
     st.header("Distribuição de gênero por região")
     st.markdown("""
-    **Hipótese:** A distribuição de gênero é uniforme pelo país, ou certas regiões (como Norte ou Nordeste) 
-    possuem maior predominância feminina no ensino superior?
+       A distribuição de gênero é uniforme pelo país?
     """)
 
     df_regiao_sexo = df.groupby(['Desc_Regiao_Curso', 'Desc_Genero']).size().reset_index(name='Contagem')
@@ -94,11 +90,7 @@ try:
     
 
     st.divider()
-    st.header("5. O 'Gender Gap': Quais cursos são dominados por homens ou mulheres?")
-    st.markdown("""
-    **Análise de Segregação:** Historicamente, áreas de **Saúde e Educação** atraem mais mulheres, 
-    enquanto **Engenharias e Tecnologia** atraem mais homens. Os dados confirmam esse padrão no Brasil?
-    """)
+    st.header("Quais cursos são dominados por homens ou mulheres?")
 
     df_curso_sexo = df.groupby(['NOME_CURSO', 'Desc_Genero']).size().reset_index(name='Contagem')
     
@@ -141,21 +133,6 @@ try:
 
     st.plotly_chart(fig_gap, use_container_width=True)
 
-    try:
-        top_fem = ordem_cursos[-1] # 
-        perc_top_fem = pivo.loc[top_fem, 'Feminino']
-        
-        top_masc = ordem_cursos[0]
-        perc_top_masc = pivo.loc[top_masc, 'Masculino'] if 'Masculino' in pivo.columns else 0
-
-        st.info(f"""
-        💡 **Extremos do Gráfico:**
-        * O curso com maior presença feminina é **{top_fem}** ({perc_top_fem:.1f}% mulheres).
-        * O curso com maior presença masculina é **{top_masc}** ({perc_top_masc:.1f}% homens).
-        * A linha tracejada no centro marca o equilíbrio perfeito. Quanto mais longe dela, maior a segregação.
-        """)
-    except:
-        pass
 
 except Exception as e:
-    st.error(f"Erro ao carregar os dados ou gerar gráficos. Verifique se as funções estão retornando os DataFrames corretamente: {e}")
+    st.error(f"Erro ao carregar os dados ou gerar gráficos {e}")
