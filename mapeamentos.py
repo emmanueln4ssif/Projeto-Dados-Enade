@@ -91,3 +91,41 @@ CODIGO_UF_PARA_SIGLA = {
     50: 'MS', 51: 'MT', 52: 'GO', 53: 'DF'
 }
 
+CO_CATEGAD_LABELS = {
+    1: 'Pública Federal', 2: 'Pública Estadual', 3: 'Pública Municipal', 4: 'Privada c/ fins lucrativos', 5: 'Privada s/ fins lucrativos', 7: 'Especial', 8: 'Comunitária/Confessional'
+}
+
+CO_MODALIDADE_LABELS = {
+    0: 'EaD', 1: 'Presencial'
+}
+
+CO_GRUPO_LABELS = {
+    5: 'Medicina Veterinária',
+    6: 'Odontologia',
+    12: 'Medicina',
+    17: 'Agronomia',
+    19: 'Farmácia',
+    21: 'Arquitetura e Urbanismo',
+    23: 'Enfermagem',
+    27: 'Fonoaudiologia', 
+    28: 'Nutrição',
+    36: 'Fisioterapia',
+    51: 'Zootecnia',
+    55: 'Biomedicina',
+    90: 'Tec. em Agronegócio',
+    91: 'Tec. em Gestão Hospitalar',
+    92: 'Tec. em Gestão Ambiental',
+    69: 'Tec. em Radiologia', 
+    6410: 'Tec. em Segurança no Trabalho',
+    95: 'Tec. em Estética e Cosmética',
+    5710: 'Engenharia Civil',
+    5806: 'Engenharia Elétrica',
+    5814: 'Eng. Controle e Automação',
+    6208: 'Engenharia de Produção',
+    6307: 'Engenharia Ambiental',
+    6002: 'Engenharia de Alimentos',
+    6008: 'Engenharia Química',
+    5902: 'Engenharia Mecânica',
+    6405: 'Engenharia Florestal',
+    6411: 'Engenharia de Computação',
+}

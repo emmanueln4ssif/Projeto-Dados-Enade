@@ -32,8 +32,7 @@ def get_geojson():
 with st.sidebar:
     st.caption("Dados do IDHM 2021 são oriundos do portal oficial do Atlas Brasil (www.atlasbrasil.com.br)")
 
-st.title("Panorama ENADE 2023 - Geografia")
-st.markdown("Análise geográfica dos estudantes inscritos no exame.")
+st.title("Panorama geográfico do exame")
 
 try:
     df = load_data()
@@ -54,6 +53,8 @@ try:
 
     
     st.subheader("Distribuição de inscritos pelo território nacional")
+    
+    st.markdown("A distribuição espacial dos inscritos no ENADE 2023 espelha as dimensões continentais do Brasil. O gráfico de barras e o mapa evidenciam a **hegemonia da Região Sudeste**, que sozinha concentra quase metade dos estudantes avaliados (aproximadamente **187 mil**). Isso reflete a densidade populacional e, principalmente, a concentração de infraestrutura universitária nos estados de SP, RJ e MG. ")
 
     dados_uf = df['Desc_UF_Curso'].value_counts().reset_index()
     dados_uf.columns = ['UF', 'Total']
@@ -66,7 +67,23 @@ try:
         dados_mapa = df['UF_SIGLA_MAPA'].value_counts().reset_index()
         dados_mapa.columns = ['UF', 'Total']
 
-    col_mapa, col_regiao = st.columns([3, 2], gap="medium")
+    col_regiao, col_mapa = st.columns([2, 3], gap="medium")
+
+    
+    with col_regiao:
+        fig_reg = px.bar(
+            dados_regiao,
+            x='Regiao', y='Total',
+            color='Regiao', text='Total',
+            color_discrete_sequence=px.colors.qualitative.Safe
+        )
+        fig_reg.update_traces(textposition='outside')
+        fig_reg.update_layout(
+            showlegend=False, xaxis_title="", yaxis_title="",
+            margin=dict(t=30, b=0), height=400,
+            title="Inscritos por Região"
+        )
+        st.plotly_chart(fig_reg, use_container_width=True)
     
     with col_mapa:
         if 'CO_UF_CURSO' in df.columns:
@@ -89,23 +106,10 @@ try:
                 height=400
             )
             st.plotly_chart(fig_mapa, use_container_width=True)
+            st.caption("""
+                **Dica:** Passe o mouse sobre qualquer estado para ver o número exato de estudantes inscritos naquela unidade federativa.
+            """)
 
-    with col_regiao:
-        fig_reg = px.bar(
-            dados_regiao,
-            x='Regiao', y='Total',
-            color='Regiao', text='Total',
-            color_discrete_sequence=px.colors.qualitative.Safe
-        )
-        fig_reg.update_traces(textposition='outside')
-        fig_reg.update_layout(
-            showlegend=False, xaxis_title="", yaxis_title="",
-            margin=dict(t=30, b=0), height=400,
-            title="Inscritos por Região"
-        )
-        st.plotly_chart(fig_reg, use_container_width=True)
-
-    st.markdown("---")
 
     st.markdown("**Estados com mais inscritos**")
     st.markdown("Os estados com mais estudantes inscritos no exame se concentram no Centro-Sul do país. Conforme esperado, São Paulo e Minas Gerais figuram nas mesmas posições em relação ao ranking de população absoluta. O Paraná, em terceiro, aparece à frente da Bahia e do Rio de Janeiro, estados com população superior a ele.")
@@ -137,7 +141,7 @@ try:
 
     st.subheader("O subíndice de Educação do Índice de Desenvolvimento Humano (IDH) e inferências com o desempenho")
     st.markdown("Partindo do pretexto que o IDH é um indicador que leva em conta três pilares: saúde, **educação** e renda. Podemos estabelecer uma relação entre o desenvolvimento educacional de um estado e o desempenho dos estudantes daquele local?")
-    st.markdown("O Sub-índice do IDHM relativo à Educação, é obtido a partir da taxa de alfabetização e da taxa bruta de frequência à escola, convertidas em índices por: (valor observado - limite inferior) / (limite superior - limite inferior), com limites inferior e superior de 0% e 100%. O IDH-Educação é a média desses 2 índices, com peso 2 para taxa de alfabetização e peso 1 para o da taxa bruta de frequência. ")
+    st.markdown("O subíndice do IDHM relativo à educação, é obtido a partir da taxa de alfabetização e da taxa bruta de frequência à escola, convertidas em índices por: (valor observado - limite inferior) / (limite superior - limite inferior), com limites inferior e superior de 0% e 100%. O IDH-Educação é a média desses 2 índices, com peso 2 para taxa de alfabetização e peso 1 para o da taxa bruta de frequência. ")
 
     df_regressao_raw = load_idh_notes_data()
 
@@ -175,7 +179,7 @@ try:
                     size='Qtd_Alunos',       
                     trendline='ols',
                     title="Regressão linear: IDHM Educação estadual vs. nota geral média no ENADE 2023",
-                    labels={'IDHM 2021': 'IDH (2021)', 'NT_GER': 'Nota geral média (0-99)'},
+                    labels={'IDHM 2021': 'IDH (2021)', 'NT_GER': 'Nota geral média (0-99)', 'Territorialidades': 'UF', 'Qtd_Alunos':'Alunos'},
                     hover_data=['Qtd_Alunos']
                 )
                 
@@ -193,6 +197,7 @@ try:
 
 
             with col_kpi:
+             
                 st.markdown("**Estatísticas do Modelo**")
                 
                 st.metric(
@@ -208,22 +213,17 @@ try:
                     help="Quanto a nota sobe para cada 1 ponto de IDH."
                 )
 
-                st.markdown("---")
 
-                if p_valor < 0.05:
-                    st.success("**Relação Significativa!**")
-                    st.write(f"Com **p-valor de {p_valor:.4f}**, há evidência estatística de que o IDH afeta a nota.")
-                else:
-                    st.warning("**Relação Inconclusiva**")
-                    st.write(f"Com **p-valor de {p_valor:.4f}**, não podemos afirmar que o IDH afeta a nota.")
+                st.warning("**Relação Inconclusiva**")
+                st.write(f"Com **p-valor de {p_valor:.4f}**, não podemos afirmar que o IDH afeta a nota.")
 
-            st.markdown("A partir da regressão apresentada, a resposta para o nosso questionamento é **não!** Embora estados da Região Sudeste figurem entre os maiores IDHs do país, a realidade das notas dos candidatos do ENADE 2023 fogem dessa perspectiva. O Espírito Santo, por exemplo, possui o 5º maior IDH do país, porém está entre as menores médias entre os estados. O Maranhão, por sua vez, possui o menor IDH entre as 27 UFs do país, mas tem uma nota acima do Espírito Santo e muito próxima da nota média do estado de São Paulo.")
+            st.markdown("A partir da regressão apresentada, a resposta para o nosso questionamento é **não!** Embora estados da Região Sudeste figurem entre os maiores IDHs do país, a realidade das notas dos candidatos do ENADE 2023 fogem dessa perspectiva. Minas Gerais, por exemplo, possui o 7º maior IDHM-Educação do país, porém está perto das menores médias entre os estados. A Bahia, por sua vez, possui o 2º menor IDHM-Educação entre as 27 UFs do país, mas tem uma nota acima de Minas Gerais e até de São Paulo no ENADE, maior IDH do país.")
 
             with st.expander("Ver tabela de dados agrupados"):
             
                 st.dataframe(
                     df_analise[['Territorialidades', 'Qtd_Alunos', 'NT_GER', 'IDHM Educação 2021']]
-                    .sort_values('NT_GER', ascending=True)
+                    .sort_values('Territorialidades', ascending=True)
                     .style.format({'IDHM Educação 2021': '{:.3f}', 'NT_GER': '{:.2f}'})
                 )
 
